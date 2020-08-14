@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-
+use App\Role;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -11,6 +11,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UserSeeder::class);
+        Role::insert(
+            [
+                [
+                    'role' => 'admin',
+                    'hierarchy' => 1
+                ],
+                [
+                    'role' => 'renter',
+                    'hierarchy' => 2
+                ]
+            ]
+
+        );
     }
 }

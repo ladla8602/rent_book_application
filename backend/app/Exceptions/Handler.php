@@ -4,9 +4,14 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Support\Arr;
+use App\Traits\RestApi;
+use Illuminate\Auth\AuthenticationException;
+use Config;
 
 class Handler extends ExceptionHandler
 {
+    use RestApi;
     /**
      * A list of the exception types that are not reported.
      *
@@ -52,4 +57,33 @@ class Handler extends ExceptionHandler
     {
         return parent::render($request, $exception);
     }
+
+    public function unauthenticated($request, AuthenticationException $exception){
+
+        $guard = Arr::get($exception->guards(),0);
+        switch($guard){
+
+          case 'web':
+              return redirect('/login');
+              break;
+
+          case 'api':
+            return $this->resultResponse(
+                Config::get('restresponsecode.PERMISSION_DENIED'),
+                [],
+                [],
+                'You are not logged in!'
+                );
+            break;
+
+          default:
+            return $this->resultResponse(
+                Config::get('restresponsecode.PERMISSION_DENIED'),
+                [],
+                [],
+                'You are not logged in!'
+            );
+            break;
+        }
+      }
 }

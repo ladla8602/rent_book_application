@@ -5,10 +5,11 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'username', 'email', 'password', 'role'
     ];
 
     /**
@@ -36,4 +37,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+    * Add a mutator to ensure hashed passwords
+    */
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
+    }
+
+    // public function role() {
+    //     return $this->hasOne('App\User', 'hierarchy', 'role');
+    // }
+
+    public function books()
+    {
+        return $this->hasMany('App\Books', 'book_id', 'id');
+    }
+
+    public function rentHistories()
+    {
+        return $this->hasMany('App\RentHistory', 'user_id', 'id');
+    }
 }
