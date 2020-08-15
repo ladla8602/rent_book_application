@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Config;
 
 class User extends Authenticatable
 {
@@ -37,6 +38,22 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function isAdmin() {
+        if($this->role == Config::get('constants.ADMIN_ROLE')){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function isRenter() {
+        if($this->role == Config::get('constants.RENTER_ROLE')){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
     * Add a mutator to ensure hashed passwords

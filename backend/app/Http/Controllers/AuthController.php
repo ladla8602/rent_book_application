@@ -31,7 +31,7 @@ class AuthController extends Controller
 
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
-            $data['token'] = $user->createToken('ProjectOne')->accessToken;
+            $data['token'] = $user->createToken('RentBookApplication')->accessToken;
             $data['user'] = $user;
             return $this->resultResponse(
                 Config::get('restresponsecode.SUCCESS'),

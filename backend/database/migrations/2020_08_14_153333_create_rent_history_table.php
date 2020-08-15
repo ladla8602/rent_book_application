@@ -17,10 +17,10 @@ class CreateRentHistoryTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('book_id');
-            $table->dateTime('rent_date');
+            $table->timestamp('rent_date');
             $table->boolean('is_returned')->default(false);
             $table->string('invoice')->nullable();
-            $table->dateTime('returned_date')->nullable();
+            $table->timestamp('returned_date')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

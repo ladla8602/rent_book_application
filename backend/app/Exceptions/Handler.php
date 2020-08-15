@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use App\Traits\RestApi;
 use Illuminate\Auth\AuthenticationException;
 use Config;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -55,6 +56,22 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if(get_class($exception) == "Illuminate\Database\Eloquent\ModelNotFoundException") {
+            return $this->resultResponse(
+                Config::get('restresponsecode.NOT_FOUND'),
+                [],
+                $exception->getMessage(),
+                'Data not found!'
+                );
+        }
+        if(get_class($exception) == "Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException") {
+            return $this->resultResponse(
+                Config::get('restresponsecode.NOT_ACCEPTABLE'),
+                [],
+                $exception->getMessage(),
+                'Wrong http method error!'
+                );
+        }
         return parent::render($request, $exception);
     }
 

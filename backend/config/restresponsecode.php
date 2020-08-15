@@ -7,7 +7,7 @@
 
 return [
     'SUCCESS' 			=> 200,
-    'EMPTY_RESPONSE'	=> 201,
+    'CREATED'	        => 201,
     'NOT_FOUND'         => 404,
     'PERMISSION_DENIED' => 403,
     'CONFLICT'			=> 409,
