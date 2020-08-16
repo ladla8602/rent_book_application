@@ -49,54 +49,78 @@ class RentBookController extends Controller
             'invoice'   => '',
             'created_at'=> $this->now
         ];
+        // Check for duplicate rent record
+        $checkBookHistory = RentHistory::where([
+            'book_id' => $bookId,
+            'user_id' => $userId,
+            'is_returned' => false
+        ]);
+        if(!$checkBookHistory->exists()) {
+            try {
+                $result = RentHistory::create($data);
+                if($result) {
+                    $renterDetail = [
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ];
+                    $invoiceNumber = $result->id;
+                    $bookDetail = Book::findOrFail($bookId);
 
-        $result = RentHistory::create($data);
-        if($result) {
-            $renterDetail = [
-                'name' => $user->name,
-                'email' => $user->email,
-            ];
-            $invoiceNumber = $result->id;
-            $bookDetail = Book::findOrFail($bookId);
+                    $invoiceData = [
+                        'from'       => Config::get('constants.INVOICE_FROM_ADDRESS'),
+                        'to'         => $renterDetail,
+                        'invoice_no' => $invoiceNumber,
+                        'rent_date'  => $result->created_at,
+                        'item'       => $bookDetail,
+                        'billing_info'=> Config::get('constants.INVOICE_BILLING_INFO'),
+                        'payment_info'=> Config::get('constants.INVOICE_PAYMENT_INFO')
+                    ];
 
-            $invoiceData = [
-                'from'       => Config::get('constants.INVOICE_FROM_ADDRESS'),
-                'to'         => $renterDetail,
-                'invoice_no' => $invoiceNumber,
-                'rent_date'  => $result->created_at,
-                'item'       => $bookDetail,
-                'billing_info'=> Config::get('constants.INVOICE_BILLING_INFO'),
-                'payment_info'=> Config::get('constants.INVOICE_PAYMENT_INFO')
-            ];
-
-            // generating & saving invoice
-            $getFileName = $this->generateAndSaveInvoice($invoiceData);
-            $findBook = RentHistory::where('id', $result->id);
-            $updateInvoice = $findBook->update([
-                'invoice' => $getFileName
-            ]);
-            if($updateInvoice) {
+                    // generating & saving invoice
+                    $getFileName = $this->generateAndSaveInvoice($invoiceData);
+                    $findBook = RentHistory::where('id', $result->id);
+                    $updateInvoice = $findBook->update([
+                        'invoice' => $getFileName
+                    ]);
+                    if($updateInvoice) {
+                        return $this->resultResponse(
+                            Config::get('restresponsecode.CREATED'),
+                            $result,
+                            [],
+                            'Book rented successfully'
+                        );
+                    }
+                    return $this->resultResponse(
+                        Config::get('restresponsecode.CREATED'),
+                        $result,
+                        [],
+                        'Book rented successfully but invoice not generated'
+                    );
+                } else {
+                    return $this->resultResponse(
+                        Config::get('restresponsecode.UNPROCESSABLE'),
+                        [],
+                        $result,
+                        'Something went wrong'
+                    );
+                }
+            } catch (QueryException $e) {
                 return $this->resultResponse(
-                    Config::get('restresponsecode.CREATED'),
-                    $result,
+                    Config::get('restresponsecode.UNPROCESSABLE'),
                     [],
-                    'Book rented successfully'
+                    $e->getMessage(),
+                    'Database query error!'
                 );
             }
-            return $this->resultResponse(
-                Config::get('restresponsecode.CREATED'),
-                $result,
-                [],
-                'Book rented successfully but invoice not generated'
-            );
         } else {
             return $this->resultResponse(
                 Config::get('restresponsecode.UNPROCESSABLE'),
                 [],
-                $result,
-                'Something went wrong'
+                [],
+                'This book is already rented by you.'
             );
         }
+
     }
 
     public function returnBook(Request $request, $id) {
