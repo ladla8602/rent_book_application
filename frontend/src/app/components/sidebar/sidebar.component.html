@@ -1,0 +1,36 @@
+<nav [ngClass]="{ sidebarPushRight: isActive, collapsed: collapsed }" class="sidebar" *ngIf="currentUser">
+  <div class="list-group">
+    <a [routerLinkActive]="['router-link-active']" class="list-group-item" routerLink="/dashboard">
+      <div [ngClass]="{ collapsed: collapsed }">
+        <div class="row menu-item">
+          <mat-icon>dashboard</mat-icon>&nbsp;
+          <span>Dashboard</span>
+        </div>
+      </div>
+    </a>
+    <a [routerLinkActive]="['router-link-active']" class="list-group-item" routerLink="/book-list">
+      <div [ngClass]="{ collapsed: collapsed }">
+        <div class="row menu-item">
+          <mat-icon>library_books</mat-icon>&nbsp;
+          <span>Book List</span>
+        </div>
+      </div>
+    </a>
+    <a *ngIf="isAdmin"  [routerLinkActive]="['router-link-active']" class="list-group-item" routerLink="/add-new-book">
+      <div [ngClass]="{ collapsed: collapsed }">
+        <div class="row menu-item">
+          <mat-icon>note_add</mat-icon>&nbsp;
+          <span>Add New Book</span>
+        </div>
+      </div>
+    </a>
+    <a *ngIf="isRenter" [routerLinkActive]="['router-link-active']" class="list-group-item" routerLink="/rent-history">
+      <div [ngClass]="{ collapsed: collapsed }">
+        <div class="row menu-item">
+          <mat-icon>history</mat-icon>&nbsp;
+          <span>Rent History</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</nav>

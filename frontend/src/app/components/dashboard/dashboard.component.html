@@ -1,0 +1,40 @@
+<div class="container">
+  <div class="row">
+    <br />
+    <div class="col text-center">
+      <h2>Welcome to Rental Book Service</h2>
+      <p>Only renter can rent a book</p>
+    </div>
+
+  </div>
+  <div class="row text-center">
+    <div class="col">
+      <div class="counter">
+        <i class="fa fa-code fa-2x"></i>
+        <h2 class="timer count-title count-number">{{ counts.count_books }}</h2>
+        <p class="count-text ">Available Books</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="counter">
+        <i class="fa fa-coffee fa-2x"></i>
+        <h2 class="timer count-title count-number">{{ counts.count_renters }}</h2>
+        <p class="count-text ">Happy Readers</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="counter">
+        <i class="fa fa-lightbulb-o fa-2x"></i>
+        <h2 class="timer count-title count-number">{{ counts.count_authors }}</h2>
+        <p class="count-text ">Total Authors</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="counter">
+        <i class="fa fa-bug fa-2x"></i>
+        <h2 class="timer count-title count-number">{{ counts.count_rented_books }}</h2>
+        <p class="count-text">Book Rented till now</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<div class="container content" role="main">
+  <div class="mt-0 row d-flex justify-content-center">
+      <div class="col-md-6 pt-4">
+        <div id="login" fxLayout="column">
+
+          <div id="login-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
+
+              <div id="login-form">
+
+                  <div class="logo">
+                      <h2>Rental Book Application</h2>
+                  </div>
+                  <div class="row">
+                    <ul>
+                      <li>Admin - username: admin, password: password</li>
+                      <li>Renter - username: renter, password: password</li>
+                    </ul>
+                  </div>
+                  <div class="title">LOGIN TO YOUR ACCOUNT</div>
+                  <mat-progress-bar mode="indeterminate" *ngIf="loading" class="mx-auto mt-2 mb-2"></mat-progress-bar>
+                  <mat-error class="pt-1 pb-1" *ngIf="error">{{error}}</mat-error>
+                  <form name="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+                      <mat-form-field appearance="outline">
+                          <mat-label>Email</mat-label>
+                          <input matInput formControlName="email" />
+                          <mat-icon matSuffix class="secondary-text">mail</mat-icon>
+                          <mat-error *ngIf="loginForm.get('email').hasError('required')">
+                             Email is required
+                          </mat-error>
+                          <mat-error
+                              *ngIf="!loginForm.get('email').hasError('required') &&
+                                      loginForm.get('email').hasError('email')">
+                              Please enter a valid email address
+                          </mat-error>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline">
+                          <mat-label>Password</mat-label>
+                          <input matInput type="password" formControlName="password">
+                          <mat-icon matSuffix class="secondary-text">vpn_key</mat-icon>
+                          <mat-error>
+                              Password is required
+                          </mat-error>
+                      </mat-form-field>
+
+                      <div class="remember-forgot-password row" fxLayout="row" fxLayout.xs="column"
+                           fxLayoutAlign="space-between center">
+                           <div class="col-md-6">
+
+                           </div>
+                           <div class="col-md-6">
+                            <a class="forgot-password d-flex justify-content-end" [routerLink]="'/auth/forgot-password'">
+                              Forgot Password?
+                          </a>
+                           </div>
+                      </div>
+
+                      <button type="submit" mat-raised-button color="accent" class="submit-button" aria-label="LOG IN"
+                              [disabled]="loginForm.invalid">
+                          LOGIN
+                      </button>
+
+                  </form>
+
+                  <div class="register" fxLayout="column" fxLayoutAlign="center center">
+                      <span class="text">Don't have an account?</span>
+                      <a class="link" [routerLink]="'/auth/register'">Create an account</a>
+                  </div>
+
+              </div>
+
+          </div>
+
+        </div>
+      </div>
+  </div>
+</div>
+
