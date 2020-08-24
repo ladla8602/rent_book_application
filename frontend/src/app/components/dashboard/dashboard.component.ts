@@ -18,10 +18,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadCounterData() {
     this.dashboardService.getDashboardData().subscribe(
-      (response) => {
+      (response: any) => {
         const data = response.result;
         this.counts = data;
-        console.log(this.counts);
       },
       (error) => {
         console.log(error);

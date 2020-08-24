@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost/rent_book_application/backend/api'
+  apiUrl: 'http://3.6.31.122/api'
 };

@@ -24,6 +24,72 @@ class RentBookController extends Controller
         $this->now = Carbon::now('Asia/Kolkata');
     }
 
+    public function getInvoice($invoiceNumber) {
+
+        $invoice = RentHistory::where([
+            'id' => $invoiceNumber
+        ]);
+        if($invoice->exists()) {
+            $file = $invoice->first()->invoice;
+            if($file) {
+                $filePath = Config::get('constants.STORAGE_INVOICE_PATH') . '/' . $file . '.pdf';
+            $file = File::get($filePath);
+            $type = File::mimeType($filePath);
+            $response = \Response::make($file, 200);
+            $response->header("Content-Type", $type);
+
+            return $response;
+            } else {
+                return $this->resultResponse(
+                    Config::get('restresponsecode.NOT_FOUND'),
+                    [],
+                    [],
+                    'Data not found!'
+                );
+            }
+        } else {
+            return $this->resultResponse(
+                Config::get('restresponsecode.NOT_FOUND'),
+                [],
+                [],
+                'Data not found!'
+            );
+        }
+    }
+
+    public function getRentedBook() {
+        $user = Auth::user();
+        try {
+            $rentHistory = RentHistory::where('user_id', $user->id)->orderBy('rent_date', 'DESC')->get();
+            foreach($rentHistory as $rent) {
+                $rentHistory->book = $rent->book;
+            }
+            if ($rentHistory->isNotEmpty()) {
+                return $this->resultResponse(
+                    Config::get('restresponsecode.SUCCESS'),
+                    $rentHistory,
+                    [],
+                    'Data found!'
+                );
+            } else {
+                return $this->resultResponse(
+                    Config::get('restresponsecode.NOT_FOUND'),
+                    [],
+                    [],
+                    'Data not found!'
+                );
+            }
+
+        } catch (QueryException $e) {
+            return $this->resultResponse(
+                Config::get('restresponsecode.UNPROCESSABLE'),
+                [],
+                $e->getMessage(),
+                'Database query error!'
+            );
+        }
+    }
+
     public function rentBook(Request $request) {
         $user = Auth::user();
         $requestData = $request->all();
@@ -77,7 +143,7 @@ class RentBookController extends Controller
                     ];
 
                     // generating & saving invoice
-                    $getFileName = $this->generateAndSaveInvoice($invoiceData);
+                    $getFileName = $this->generateAndSaveInvoice($invoiceData, $result->id);
                     $findBook = RentHistory::where('id', $result->id);
                     $updateInvoice = $findBook->update([
                         'invoice' => $getFileName
@@ -167,7 +233,7 @@ class RentBookController extends Controller
         }
     }
 
-    protected function generateAndSaveInvoice($data) {
+    protected function generateAndSaveInvoice($data, $id) {
         // Create storage folder if not exists
         if(!File::exists(Config::get('constants.STORAGE_ASSET_PATH'))){
             mkdir(Config::get('constants.STORAGE_ASSET_PATH'));
@@ -179,7 +245,7 @@ class RentBookController extends Controller
         $ext = '.pdf';
         $file = $fileName . $ext;
         $filePath = Config::get('constants.STORAGE_INVOICE_PATH') .'/' . $file;
-        dispatch(new GenerateInvoice($data, $filePath));
+        dispatch(new GenerateInvoice($data, $filePath, $id));
         return $fileName;
     }
 }

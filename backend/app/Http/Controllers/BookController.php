@@ -81,10 +81,35 @@ class BookController extends Controller
 
     public function getAllBooks(Request $request) {
         $user = Auth::user();
-        $books = Book::where('is_deleted', Config::get('constants.IS_DELETED_NO'))->paginate(10);
-        if($books->isNotEmpty()) {
+        $requestData = $request->all();
+        $books = Book::where('is_deleted', Config::get('constants.IS_DELETED_NO'));
+        if(isset($requestData['search']) && !empty($requestData['search'])) {
+            $books = $books->where('name', 'LIKE', '%'.$requestData['search'].'%')
+                            ->orWhere('author', 'LIKE', '%'.$requestData['search'].'%');
+        }
+
+        if(!empty($requestData['sort'])){
+            $order = !empty($requestData['sort_type']) ? $requestData['sort_type'] : 'ASC';
+            $books = $books->orderBy($requestData['sort'], $order);
+        } else {
+            $books = $books->orderBy('publish_on', 'DESC');
+        }
+
+        $books = $books->get();
+
+        if(!empty($books)) {
             foreach($books as $book){
                 $book->user = $book->user;
+                $query = DB::table('rent_history')->where([
+                    'user_id' => $user->id,
+                    'book_id' => $book->id,
+                    'is_returned' => 0
+                ]);
+                if($query->exists()) {
+                    $book->rented = 1;
+                } else {
+                    $book->rented = 0;
+                }
                 unset($book->user->role, $book->user->created_at, $book->user->updated_at);
             }
             return $this->resultResponse(
@@ -210,5 +235,38 @@ class BookController extends Controller
                 'Database query error!'
             );
         }
+    }
+
+    public function countsAll() {
+        $data = [
+            'count_books' => 0,
+            'count_renters' => 0,
+            'count_authors' => 0,
+            'count_rented_books' => 0
+        ];
+        try {
+
+            $data['count_books'] = DB::table('books')->where('is_deleted', Config::get('constants.IS_DELETED_NO'))->count();
+            $data['count_renters'] = DB::table('users')->where('role', Config::get('constants.RENTER_ROLE'))->count();
+            $queryDistinctAuthor = DB::table('books')->select(DB::raw("COUNT(DISTINCT author)"))
+                                        ->where('is_deleted', Config::get('constants.IS_DELETED_NO'))
+                                        ->groupBy('author')->get()->toArray();
+            $data['count_authors'] = count($queryDistinctAuthor);
+            $data['count_rented_books'] = DB::table('rent_history')->where('is_returned', 0)->count();
+        } catch (QueryException $e) {
+            return $this->resultResponse(
+                Config::get('restresponsecode.UNPROCESSABLE'),
+                [],
+                $e->getMessage(),
+                'Database query error!'
+            );
+        }
+
+        return $this->resultResponse(
+            Config::get('restresponsecode.SUCCESS'),
+            $data,
+            [],
+            'Count fetch successfully'
+        );
     }
 }

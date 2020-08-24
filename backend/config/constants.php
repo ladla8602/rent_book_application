@@ -19,9 +19,11 @@ return [
     'IS_DELETED_YES'    => 1,
     'IS_DELETED_NO'     => 2,
 
-     // Storage Locations
-     'STORAGE_ASSET_PATH'          => storage_path('assets/'),
-     'STORAGE_INVOICE_PATH'        => storage_path('assets/invoices'),
+    'DEFAULT_PAGE_SIZE'           => 10,
+
+    // Storage Locations
+    'STORAGE_ASSET_PATH'          => storage_path('assets/'),
+    'STORAGE_INVOICE_PATH'        => storage_path('assets/invoices'),
 
     // PDF Invoice constants
     'INVOICE_FROM_ADDRESS' => 'ABC Book Rental Company, India',

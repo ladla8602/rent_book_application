@@ -13,7 +13,7 @@
                   <div class="title">REGISTER AN ACCOUNT</div>
                   <mat-progress-bar mode="indeterminate" *ngIf="loading" class="mx-auto mt-2 mb-2"></mat-progress-bar>
                   <mat-error class="pt-1 pb-1" *ngIf="error">{{error}}</mat-error>
-                  <form name="registerForm" [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+                  <form *ngIf="!submitted"  name="registerForm" [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
 
                     <mat-form-field appearance="outline">
                       <mat-label>Name</mat-label>
@@ -84,7 +84,17 @@
                       </button>
 
                   </form>
+                  <div *ngIf="submitted">
+                    <h3 class="text-success">
+                      You have successfully registered
+                    </h3>
+                    <a class="link" [routerLink]="'/auth/login'">
+                      <button type="button" mat-raised-button color="accent" class="submit-button" aria-label="LOG IN">
+                        LOGIN NOW
+                      </button>
+                    </a>
 
+                  </div>
                   <div class="register" fxLayout="column" fxLayoutAlign="center center">
                       <span class="text">Already have an account?</span>
                       <a class="link" [routerLink]="'/auth/login'">Login</a>

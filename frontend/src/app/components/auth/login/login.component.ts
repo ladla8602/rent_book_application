@@ -13,7 +13,6 @@ import { ROLE } from './../../../@core/enums/role';
 export class LoginComponent implements OnInit {
   public loginForm: FormGroup;
   public loading = false;
-  public submitted = false;
   public returnUrl: string;
   public error = '';
   constructor(
@@ -34,14 +33,12 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   onSubmit() {
-    this.submitted = true;
     this.loading = true;
     // stop here if form is invalid
     if (this.loginForm.invalid) {
       return;
     }
 
-    this.loading = true;
     this.authService.login(this.f.email.value, this.f.password.value)
       .pipe(first())
       .subscribe(

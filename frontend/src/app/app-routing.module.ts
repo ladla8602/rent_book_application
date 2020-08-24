@@ -43,7 +43,7 @@ const routes: Routes = [
     component: BookAddComponent
   },
   {
-    path: 'edit/book:bookId',
+    path: 'book-list/edit/:bookId',
     canActivate: [AuthGuard],
     data: { roles: [Role.Admin] },
     component: BookEditComponent

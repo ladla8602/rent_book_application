@@ -15,7 +15,7 @@ export class AppComponent {
   constructor(private authenticationService: AuthenticationService, private router: Router) {
     this.authenticationService.currentUser.subscribe(x => this.user = x);
     if (this.authenticationService.isLoggedIn) {
-      this.router.navigate(['/dashboard']);
+      // this.router.navigate(['/dashboard']);
     }
   }
 

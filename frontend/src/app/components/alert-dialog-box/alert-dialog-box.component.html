@@ -1,0 +1,19 @@
+<div mat-dialog-title class="flex-container">
+  <h3 *ngIf="data.type === 'success'" class="text-success">SUCCESS</h3>
+  <h3 *ngIf="data.type === 'failed'" class="text-danger">FAILED</h3>
+</div>
+<div mat-dialog-content class="dialog-box">
+  <div class="row align-items-stretch m-1">
+    <div class="col-12 p-3">
+      <h4 *ngIf="data.type === 'success'"><mat-icon>done</mat-icon>{{ data.message }}</h4>
+      <h4 *ngIf="data.type === 'failed'"><mat-icon>report_problem</mat-icon>{{ data.message }}</h4>
+    </div>
+    <div class="col-12 d-flex justify-content-center p-2">
+      <button mat-button type="submit" mat-raised-button color="accent" class="submit-button btn btn-md"
+        aria-label="CLOSE" [mat-dialog-close]="true">
+        CLOSE
+      </button>
+    </div>
+ </div>
+
+</div>

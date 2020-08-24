@@ -17,6 +17,11 @@ import { BookListComponent } from './components/book-list/book-list.component';
 import { BookAddComponent } from './components/book-add/book-add.component';
 import { BookEditComponent } from './components/book-edit/book-edit.component';
 import { BookRentHistoryComponent } from './components/book-rent-history/book-rent-history.component';
+import { AlertDialogBoxComponent } from './components/alert-dialog-box/alert-dialog-box.component';
+import { BookAddService } from './services/book-add.service';
+import { BookListService } from './services/book-list.service';
+import { CdkColumnDef } from '@angular/cdk/table';
+import { BookDeleteDialogBoxComponent } from './components/book-list/book-delete-dialog-box/book-delete-dialog-box.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +33,9 @@ import { BookRentHistoryComponent } from './components/book-rent-history/book-re
     BookListComponent,
     BookAddComponent,
     BookEditComponent,
-    BookRentHistoryComponent
+    BookRentHistoryComponent,
+    AlertDialogBoxComponent,
+    BookDeleteDialogBoxComponent
   ],
   imports: [
     BrowserModule,
@@ -40,11 +47,12 @@ import { BookRentHistoryComponent } from './components/book-rent-history/book-re
     AppRoutingModule,
     HttpClientModule,
   ],
-  providers: [AuthenticationService,
+  providers: [AuthenticationService, BookAddService, BookListService, CdkColumnDef,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  entryComponents: [AlertDialogBoxComponent, BookDeleteDialogBoxComponent]
 })
 export class AppModule { }

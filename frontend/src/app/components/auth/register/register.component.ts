@@ -1,3 +1,4 @@
+import { AuthenticationService } from 'src/app/@shared/services/authentication.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,7 +18,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public router: Router,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private authService: AuthenticationService
   ) { }
 
   ngOnInit(): void {
@@ -32,29 +34,30 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
-    this.submitted = true;
+
     this.loading = true;
     // stop here if form is invalid
     if (this.registerForm.invalid) {
       return;
     }
 
-    this.loading = true;
-    // this.authService.login(this.f.email.value, this.f.password.value)
-    //   .pipe(first())
-    //   .subscribe(
-    //     data => {
-    //       if (data.role === 'Admin') {
-    //         this.router.navigate([this.returnUrl]);
-    //       }
-    //       if (data.role === 'User') {
-    //         this.router.navigate(['/user/dashboard']);
-    //       }
-    //     },
-    //     error => {
-    //       this.error = error;
-    //       this.loading = false;
-    //     });
+    const formData = new FormData();
+    formData.append('name', this.registerForm.get('name').value);
+    formData.append('username', this.registerForm.get('username').value);
+    formData.append('email', this.registerForm.get('email').value);
+    formData.append('password', this.registerForm.get('password').value);
+    formData.append('role', this.registerForm.get('role').value);
+
+    this.authService.register(formData).subscribe(
+      (response) => {
+        this.submitted = true;
+        this.loading = false;
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
 }

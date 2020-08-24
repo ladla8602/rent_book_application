@@ -1,1 +1,66 @@
-<p>book-rent-history works!</p>
+<div class="container">
+  <div style="height: 540px; overflow: auto;" class="scrollbar" id="style-1">
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+    <!-- Id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> # </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="bookName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Book Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.book.bookName}} </td>
+    </ng-container>
+
+    <!-- Author Column -->
+    <ng-container matColumnDef="bookAuthor">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Author Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.book.bookAuthor}} </td>
+    </ng-container>
+
+    <!-- Price Column -->
+    <ng-container matColumnDef="bookPrice">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Book Price </th>
+      <td mat-cell *matCellDef="let element"> {{element.book.bookPrice}} </td>
+    </ng-container>
+
+    <!-- Publish Date Column -->
+    <ng-container matColumnDef="bookRentedOn">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Rented On </th>
+      <td mat-cell *matCellDef="let element"> {{element.rentDate | date: 'd/MM/yyyy'}} </td>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let element">
+        <div class="row">
+          <div class="col-6">
+            <div *ngIf="element.isReturned === 0" >
+              <button mat-button mat-raised-button color="accent" (click)="returnBook(element.id)">
+                <mat-icon>reply_all</mat-icon> Return this book
+              </button>
+            </div>
+          </div>
+          <div class="col-6">
+            <div *ngIf="element.hasInvoice === 1">
+              <button mat-button mat-raised-button color="warn" (click)="printInvoice(element.id)">
+                <mat-icon>print</mat-icon> Print Invoice
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+<!-- pagination -->
+<mat-paginator [pageSizeOptions]="[10, 50, 100]" showFirstLastButtons></mat-paginator>
+</div>
+
+
